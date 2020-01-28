@@ -1,0 +1,1526 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PROJ RFC 4: Remote access to grids and GeoTIFF grids &mdash; PROJ 6.3.0 documentation</title>
+  
+
+  
+  
+  
+  
+    <link rel="canonical" href="https://proj.orgcommunity/rfc/rfc-4.html"/>
+  
+
+  
+  <script type="text/javascript" src="../../_static/js/modernizr.min.js"></script>
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script type="text/javascript" src="../../_static/jquery.js"></script>
+        <script type="text/javascript" src="../../_static/underscore.js"></script>
+        <script type="text/javascript" src="../../_static/doctools.js"></script>
+        <script type="text/javascript" src="../../_static/language_data.js"></script>
+        <script async="async" type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/theme_overrides.css" type="text/css" />
+    <link rel="author" title="About these documents" href="../../about.html" />
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="FAQ" href="../../faq.html" />
+    <link rel="prev" title="PROJ RFC 3: Dependency management" href="rfc-3.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #353130" >
+          
+
+          
+            <a href="../../index.html">
+          
+
+          
+            
+            <img src="../../_static/logo.png" class="logo" alt="Logo"/>
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                6.3.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../about.html">About</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../news.html">News</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../download.html">Download</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../install.html">Installation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../usage/index.html">Using PROJ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../apps/index.html">Applications</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../operations/index.html">Coordinate operations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../resource_files.html">Resource files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../geodesic.html">Geodesic calculations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../development/index.html">Development</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">Community</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../channels.html">Communication channels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../contributing.html">Contributing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code_contributions.html">Guidelines for PROJ code contributors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../code_of_conduct.html">Code of Conduct</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="index.html">Request for Comments</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rfc-1.html">PROJ RFC 1: Project Committee Guidelines</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rfc-2.html">PROJ RFC 2: Initial integration of “GDAL SRS barn” work</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rfc-3.html">PROJ RFC 3: Dependency management</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">PROJ RFC 4: Remote access to grids and GeoTIFF grids</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#motivation">Motivation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#summary-of-work-planned-by-this-rfc">Summary of work planned by this RFC</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#network-access-to-grids">Network access to grids</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#grids-in-geotiff-format">Grids in GeoTIFF format</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dropping-grid-catalog-functionality">Dropping grid catalog functionality</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#backward-compatibility-issues">Backward compatibility issues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#potential-future-related-work">Potential future related work</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#testing">Testing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#proposed-implementation">Proposed implementation</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#adoption-status">Adoption status</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../index.html#conference">Conference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../faq.html">FAQ</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../glossary.html">Glossary</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../zreferences.html">References</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PROJ</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Community</a> &raquo;</li>
+        
+          <li><a href="index.html">Request for Comments</a> &raquo;</li>
+        
+      <li>PROJ RFC 4: Remote access to grids and GeoTIFF grids</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/OSGeo/PROJ/edit//6.3/docs/source/community/rfc/rfc-4.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <div class="rst-breadcrumbs-buttons" role="navigation" aria-label="breadcrumb navigation">
+      
+        <a href="../../faq.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rfc-3.html" class="btn btn-neutral float-left" title="PROJ RFC 3: Dependency management" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+  </div>
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="proj-rfc-4-remote-access-to-grids-and-geotiff-grids">
+<span id="rfc4"></span><h1>PROJ RFC 4: Remote access to grids and GeoTIFF grids<a class="headerlink" href="#proj-rfc-4-remote-access-to-grids-and-geotiff-grids" title="Permalink to this headline">¶</a></h1>
+<dl class="field-list simple">
+<dt class="field-odd">Author</dt>
+<dd class="field-odd"><p>Even Rouault, Howard Butler</p>
+</dd>
+<dt class="field-even">Contact</dt>
+<dd class="field-even"><p><a class="reference external" href="mailto:even&#46;rouault&#37;&#52;&#48;spatialys&#46;com">even<span>&#46;</span>rouault<span>&#64;</span>spatialys<span>&#46;</span>com</a>, <a class="reference external" href="mailto:howard&#37;&#52;&#48;hobu&#46;co">howard<span>&#64;</span>hobu<span>&#46;</span>co</a></p>
+</dd>
+<dt class="field-odd">Status</dt>
+<dd class="field-odd"><p>Adopted</p>
+</dd>
+<dt class="field-even">Implementation target</dt>
+<dd class="field-even"><p>PROJ 7</p>
+</dd>
+<dt class="field-odd">Last Updated</dt>
+<dd class="field-odd"><p>2020-01-10</p>
+</dd>
+</dl>
+<div class="section" id="motivation">
+<h2>Motivation<a class="headerlink" href="#motivation" title="Permalink to this headline">¶</a></h2>
+<p>PROJ 6 brings undeniable advances in the management of coordinate
+transformations between datums by relying and applying information available in
+the PROJ database. PROJ’s rapid evolution from a cartographic projections
+library with a little bit of geodetic capability to a full geodetic
+transformation and description environment has highlighted the importance of
+the support data. Users desire the convenience of software doing the right
+thing with the least amount of fuss, and survey organizations wish to deliver
+their models across as wide a software footprint as possible.  To get results
+with the highest precision, a grid file that defines a model that provides
+dimension shifts is often needed. The proj-datumgrid project centralizes grids
+available under an open data license and bundles them in different archives
+split along major geographical regions of the world .</p>
+<p>It is assumed that a PROJ user has downloaded and installed grid files that are
+referred to in the PROJ database. These files can be quite large in aggregate,
+and packaging support by major distribution channels is somewhat uneven due to
+their size, sometimes ambiguous licensing story, and difficult-to-track
+versioning and lineage.  It is not always clear to the user, especially to
+those who may not be so familiar with geodetic operations, that the highest
+precision transformation may not always being applied if grid data is not
+available. Users want both convenience and correctness, and management of the
+shift files can be challenging to those who may not be aware of their
+importance to the process.</p>
+<p>The computing environment in which PROJ operates is also changing. Because the
+shift data can be so large (currently more than 700 MB of uncompressed data,
+and growing), deployment of high accuracy operations can be limited due to
+deployment size constraints (serverless operations, for example). Changing to a
+delivery format that supports incremental access over a network along with
+convenient access and compression will ease the resource burden the shift files
+present while allowing the project to deliver transformation capability with
+the highest known precision provided by the survey organizations.</p>
+<p>Adjustment grids also tend to be provided in many different formats depending
+on the organization and country that produced them. In PROJ, we have over time
+“standardized” on using horizontal shift grids as NTv2 and vertical shift grids
+using GTX. Both have poor general support as dedicated formats, limited
+metadata capabilities, and neither are not necessarily “cloud optimized” for
+incremental access across a network.</p>
+</div>
+<div class="section" id="summary-of-work-planned-by-this-rfc">
+<h2>Summary of work planned by this RFC<a class="headerlink" href="#summary-of-work-planned-by-this-rfc" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>Grids will be hosted by one or several Content Delivery Networks (CDN)</p></li>
+<li><p>Grid loading mechanism will be reworked to be able to download grids or parts
+of grids from a online repository. When opted in, users will no longer have to
+manually fetch grid files and place them in PROJ_LIB.
+Full and accurate capability of the software will no longer require hundreds
+of megabytes of grid shift files in advance, even if only just a few of them
+are needed for the transformations done by the user.</p></li>
+<li><p>Local caching of grid files, or even part of files, so that users end up
+mirroring what they actually use.</p></li>
+<li><p>A grid shift format, for both horizontal and vertical shift grids (and in
+potential future steps, for other needs, such as deformation models) will be
+implemented.</p></li>
+</ul>
+<p>The use of grids locally available will of course still be available, and will
+be the default behaviour.</p>
+</div>
+<div class="section" id="network-access-to-grids">
+<h2>Network access to grids<a class="headerlink" href="#network-access-to-grids" title="Permalink to this headline">¶</a></h2>
+<p>curl will be an optional build dependency of PROJ, added in autoconf and cmake
+build systems. It can be disabled at build time, but this must be
+an explicit setting of configure/cmake as the resulting builds have less functionality.
+When curl is enabled at build time, download of grids themselves will not be
+enabled by default at runtime. It will require explicit consent of the user, either
+through the API
+(<code class="xref c c-func docutils literal notranslate"><span class="pre">proj_context_set_enable_network()</span></code>) through the PROJ_NETWORK=ON
+environment variable, or the <code class="docutils literal notranslate"><span class="pre">network</span> <span class="pre">=</span> <span class="pre">on</span></code> setting of proj.ini.</p>
+<p>Regarding the minimum version of libcurl required, given GDAL experience that
+can build with rather ancient libcurl for similar functionality, we can aim for
+libcurl &gt;= 7.29.0 (as being available in RHEL 7).</p>
+<p>An alternate pluggable network interface can also be set by the user in case
+suppot for libcurl was not built in, or if for the desired context of use, the
+user wishes to provide the network implementation (a typical use case could be
+QGIS that would use its QT-based networking facilities to solve issues with
+SSL, proxy, authentication, etc.)</p>
+<p>A text configuration file, installed in ${installation_prefix}/share/proj/proj.ini
+(or ${PROJ_LIB}/proj.ini)
+will contain the URL of the CDN that will be used.
+The user may also override this setting with the
+<code class="xref c c-func docutils literal notranslate"><span class="pre">proj_context_set_url_endpoint()</span></code> or through the PROJ_NETWORK_ENDPOINT
+environment variable.</p>
+<p>The rationale for putting proj.ini in that location is
+that it is a well-known place by PROJ users, with the existing PROJ_LIB mechanics
+for systems like Windows where hardcoded paths at runtime aren’t generaly usable.</p>
+<div class="section" id="c-api">
+<h3>C API<a class="headerlink" href="#c-api" title="Permalink to this headline">¶</a></h3>
+<p>The preliminary C API for the above is:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Enable or disable network access.</span>
+<span class="cm">*</span>
+<span class="cm">* @param ctx PROJ context, or NULL</span>
+<span class="cm">* @return TRUE if network access is possible. That is either libcurl is</span>
+<span class="cm">*         available, or an alternate interface has been set.</span>
+<span class="cm">*/</span>
+<span class="kt">int</span> <span class="nf">proj_context_set_enable_network</span><span class="p">(</span><span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">enable</span><span class="p">);</span>
+
+<span class="cm">/** Define URL endpoint to query for remote grids.</span>
+<span class="cm">*</span>
+<span class="cm">* This overrides the default endpoint in the PROJ configuration file or with</span>
+<span class="cm">* the PROJ_NETWORK_ENDPOINT environment variable.</span>
+<span class="cm">*</span>
+<span class="cm">* @param ctx PROJ context, or NULL</span>
+<span class="cm">* @param url Endpoint URL. Must NOT be NULL.</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">proj_context_set_url_endpoint</span><span class="p">(</span><span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">url</span><span class="p">);</span>
+
+<span class="cm">/** Opaque structure for PROJ. Implementations might cast it to their</span>
+<span class="cm"> * structure/class of choice. */</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="n">PROJ_NETWORK_HANDLE</span> <span class="n">PROJ_NETWORK_HANDLE</span><span class="p">;</span>
+
+<span class="cm">/** Network access: open callback</span>
+<span class="cm">*</span>
+<span class="cm">* Should try to read the size_to_read first bytes at the specified offset of</span>
+<span class="cm">* the file given by URL url,</span>
+<span class="cm">* and write them to buffer. *out_size_read should be updated with the actual</span>
+<span class="cm">* amount of bytes read (== size_to_read if the file is larger than size_to_read).</span>
+<span class="cm">* During this read, the implementation should make sure to store the HTTP</span>
+<span class="cm">* headers from the server response to be able to respond to</span>
+<span class="cm">* proj_network_get_header_value_cbk_type callback.</span>
+<span class="cm">*</span>
+<span class="cm">* error_string_max_size should be the maximum size that can be written into</span>
+<span class="cm">* the out_error_string buffer (including terminating nul character).</span>
+<span class="cm">*</span>
+<span class="cm">* @return a non-NULL opaque handle in case of success.</span>
+<span class="cm">*/</span>
+<span class="k">typedef</span> <span class="n">PROJ_NETWORK_HANDLE</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">proj_network_open_cbk_type</span><span class="p">)(</span>
+                                                    <span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span>
+                                                    <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">url</span><span class="p">,</span>
+                                                    <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">offset</span><span class="p">,</span>
+                                                    <span class="kt">size_t</span> <span class="n">size_to_read</span><span class="p">,</span>
+                                                    <span class="kt">void</span><span class="o">*</span> <span class="n">buffer</span><span class="p">,</span>
+                                                    <span class="kt">size_t</span><span class="o">*</span> <span class="n">out_size_read</span><span class="p">,</span>
+                                                    <span class="kt">size_t</span> <span class="n">error_string_max_size</span><span class="p">,</span>
+                                                    <span class="kt">char</span><span class="o">*</span> <span class="n">out_error_string</span><span class="p">,</span>
+                                                    <span class="kt">void</span><span class="o">*</span> <span class="n">user_data</span><span class="p">);</span>
+
+<span class="cm">/** Network access: close callback */</span>
+<span class="k">typedef</span> <span class="nf">void</span> <span class="p">(</span><span class="o">*</span><span class="n">proj_network_close_cbk_type</span><span class="p">)(</span><span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span>
+                                            <span class="n">PROJ_NETWORK_HANDLE</span><span class="o">*</span> <span class="n">handle</span><span class="p">,</span>
+                                            <span class="kt">void</span><span class="o">*</span> <span class="n">user_data</span><span class="p">);</span>
+
+<span class="cm">/** Network access: get HTTP headers */</span>
+<span class="k">typedef</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="p">(</span><span class="o">*</span><span class="n">proj_network_get_header_value_cbk_type</span><span class="p">)(</span>
+                                            <span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span>
+                                            <span class="n">PROJ_NETWORK_HANDLE</span><span class="o">*</span> <span class="n">handle</span><span class="p">,</span>
+                                            <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">header_name</span><span class="p">,</span>
+                                            <span class="kt">void</span><span class="o">*</span> <span class="n">user_data</span><span class="p">);</span>
+
+<span class="cm">/** Network access: read range</span>
+<span class="cm">*</span>
+<span class="cm">* Read size_to_read bytes from handle, starting at offset, into</span>
+<span class="cm">* buffer.</span>
+<span class="cm">* During this read, the implementation should make sure to store the HTTP</span>
+<span class="cm">* headers from the server response to be able to respond to</span>
+<span class="cm">* proj_network_get_header_value_cbk_type callback.</span>
+<span class="cm">*</span>
+<span class="cm">* error_string_max_size should be the maximum size that can be written into</span>
+<span class="cm">* the out_error_string buffer (including terminating nul character).</span>
+<span class="cm">*</span>
+<span class="cm">* @return the number of bytes actually read (0 in case of error)</span>
+<span class="cm">*/</span>
+<span class="k">typedef</span> <span class="nf">size_t</span> <span class="p">(</span><span class="o">*</span><span class="n">proj_network_read_range_type</span><span class="p">)(</span>
+                                            <span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span>
+                                            <span class="n">PROJ_NETWORK_HANDLE</span><span class="o">*</span> <span class="n">handle</span><span class="p">,</span>
+                                            <span class="kt">unsigned</span> <span class="kt">long</span> <span class="kt">long</span> <span class="n">offset</span><span class="p">,</span>
+                                            <span class="kt">size_t</span> <span class="n">size_to_read</span><span class="p">,</span>
+                                            <span class="kt">void</span><span class="o">*</span> <span class="n">buffer</span><span class="p">,</span>
+                                            <span class="kt">size_t</span> <span class="n">error_string_max_size</span><span class="p">,</span>
+                                            <span class="kt">char</span><span class="o">*</span> <span class="n">out_error_string</span><span class="p">,</span>
+                                            <span class="kt">void</span><span class="o">*</span> <span class="n">user_data</span><span class="p">);</span>
+
+<span class="cm">/** Define a custom set of callbacks for network access.</span>
+<span class="cm">*</span>
+<span class="cm">* All callbacks should be provided (non NULL pointers).</span>
+<span class="cm">*</span>
+<span class="cm">* @param ctx PROJ context, or NULL</span>
+<span class="cm">* @param open_cbk Callback to open a remote file given its URL</span>
+<span class="cm">* @param close_cbk Callback to close a remote file.</span>
+<span class="cm">* @param get_header_value_cbk Callback to get HTTP headers</span>
+<span class="cm">* @param read_range_cbk Callback to read a range of bytes inside a remote file.</span>
+<span class="cm">* @param user_data Arbitrary pointer provided by the user, and passed to the</span>
+<span class="cm">* above callbacks. May be NULL.</span>
+<span class="cm">* @return TRUE in case of success.</span>
+<span class="cm">*/</span>
+<span class="kt">int</span> <span class="nf">proj_context_set_network_callbacks</span><span class="p">(</span>
+    <span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span>
+    <span class="n">proj_network_open_cbk_type</span> <span class="n">open_cbk</span><span class="p">,</span>
+    <span class="n">proj_network_close_cbk_type</span> <span class="n">close_cbk</span><span class="p">,</span>
+    <span class="n">proj_network_get_header_value_cbk_type</span> <span class="n">get_header_value_cbk</span><span class="p">,</span>
+    <span class="n">proj_network_read_range_type</span> <span class="n">read_range_cbk</span><span class="p">,</span>
+    <span class="kt">void</span><span class="o">*</span> <span class="n">user_data</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To make network access efficient, PROJ will internally have a in-memory cache
+of file ranges to only issue network requests by chunks of 16 KB or multiple of them,
+to limit the number of HTTP GET requests and minimize latency caused by network
+access. This is very similar to the behaviour of the GDAL
+<a class="reference external" href="https://gdal.org/user/virtual_file_systems.html#vsicurl-http-https-ftp-files-random-access">/vsicurl/</a>
+I/O layer. The plan is to mostly copy GDAL’s vsicurl implementation inside PROJ, with
+needed adjustmeents and proper namespacing of it.</p>
+<p>A retry strategy (typically a delay with an exponential back-off and some random
+jitter) will be added to account for intermittent network or server-side failure.</p>
+</div>
+<div class="section" id="url-building">
+<h3>URL building<a class="headerlink" href="#url-building" title="Permalink to this headline">¶</a></h3>
+<p>The PROJ database has a <code class="docutils literal notranslate"><span class="pre">grid_transformation</span></code> grid whose column <code class="docutils literal notranslate"><span class="pre">grid_name</span></code>
+(and possibly <code class="docutils literal notranslate"><span class="pre">grid2_name</span></code>) contain the name of the grid as indicated by the
+authority having registered the transformation (typically EPSG). As those
+grid names are not generally directly usable by PROJ, the PROJ database has
+also a <code class="docutils literal notranslate"><span class="pre">grid_alternatives</span></code> table that link original grid names to the ones used
+by PROJ. When network access will be available and needed due to lack of a
+local grid, the full URL will be the
+endpoint from the configuration or set by the user, the basename of the PROJ
+usable filename, and the “tif” suffix. So if the CDN is at <a class="reference external" href="http://example.com">http://example.com</a>
+and the name from <code class="docutils literal notranslate"><span class="pre">grid_alternatives</span></code> is egm96_15.gtx, then the URL will
+be <a class="reference external" href="http://example.com/egm96_15.tif">http://example.com/egm96_15.tif</a></p>
+</div>
+<div class="section" id="grid-loading">
+<h3>Grid loading<a class="headerlink" href="#grid-loading" title="Permalink to this headline">¶</a></h3>
+<p>The following files will be affected, in one way or another, by the above describes
+changes:
+nad_cvt.cpp, nad_intr.cpp, nad_init.cpp, grid_info.cpp, grid_list.cpp, apply_gridshift.cpp,
+apply_vgridshift.cpp.</p>
+<p>In particular the current logic that consists to ingest all the values of a
+grid/subgrid in the ct-&gt;cvs array will be completely modified, to enable
+access to grid values at a specified (x,y) location.</p>
+</div>
+<div class="section" id="proj-create-crs-to-crs-proj-create-operations-impacts">
+<h3>proj_create_crs_to_crs() / proj_create_operations() impacts<a class="headerlink" href="#proj-create-crs-to-crs-proj-create-operations-impacts" title="Permalink to this headline">¶</a></h3>
+<p>Once network access is available, all grids known to the PROJ database
+(grid_transformation + grid_alternatives table) will be assumed to be available,
+when computing the potential pipelines between two CRS.</p>
+<p>Concretely, this will be equivalent to calling
+<a class="reference internal" href="../../development/reference/functions.html#_CPPv456proj_operation_factory_context_set_grid_availability_useP10PJ_CONTEXTP28PJ_OPERATION_FACTORY_CONTEXT26PROJ_GRID_AVAILABILITY_USE" title="proj_operation_factory_context_set_grid_availability_use"><code class="xref cpp cpp-func docutils literal notranslate"><span class="pre">proj_operation_factory_context_set_grid_availability_use()</span></code></a>
+with the <code class="docutils literal notranslate"><span class="pre">use</span></code> argument set to a new enumeration value</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Results will be presented as if grids known to PROJ (that is</span>
+<span class="cm">* registered in the grid_alternatives table of its database) were</span>
+<span class="cm">* available. Used typically when networking is enabled.</span>
+<span class="cm">*/</span>
+<span class="n">PROJ_GRID_AVAILABILITY_KNOWN_AVAILABLE</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="local-on-disk-caching-of-remote-grids">
+<h3>Local on-disk caching of remote grids<a class="headerlink" href="#local-on-disk-caching-of-remote-grids" title="Permalink to this headline">¶</a></h3>
+<p>As many workflows will tend to use the same grids over and over, a local
+on-disk caching of remote grids will be added. The cache will be a single
+SQLite3 database, in a user-writable directory shared by all applications using
+PROJ.</p>
+<p>Its total size will be configurable, with a default maximum size of 100 MB
+in proj.ini. The cache will also keep the timestamp of the last time it checked
+various global properties of the file (its size, Last-Modified and ETag headers).
+A time-to-live parameter, with a default of 1 day in proj.ini, will be used to
+determine whether the CDN should be hit to verify if the information in the
+cache is still up-to-date.</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="cm">/** Enable or disable the local cache of grid chunks</span>
+<span class="cm">*</span>
+<span class="cm">* This overrides the setting in the PROJ configuration file.</span>
+<span class="cm">*</span>
+<span class="cm">* @param ctx PROJ context, or NULL</span>
+<span class="cm">* @param enabled TRUE if the cache is enabled.</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">proj_grid_cache_set_enable</span><span class="p">(</span><span class="n">PJ_CONTEXT</span> <span class="o">*</span><span class="n">ctx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">enabled</span><span class="p">);</span>
+
+<span class="cm">/** Override, for the considered context, the path and file of the local</span>
+<span class="cm">* cache of grid chunks.</span>
+<span class="cm">*</span>
+<span class="cm">* @param ctx PROJ context, or NULL</span>
+<span class="cm">* @param fullname Full name to the cache (encoded in UTF-8). If set to NULL,</span>
+<span class="cm">*                 caching will be disabled.</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">proj_grid_cache_set_filename</span><span class="p">(</span><span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span> <span class="k">const</span> <span class="kt">char</span><span class="o">*</span> <span class="n">fullname</span><span class="p">);</span>
+
+<span class="cm">/** Override, for the considered context, the maximum size of the local</span>
+<span class="cm">* cache of grid chunks.</span>
+<span class="cm">*</span>
+<span class="cm">* @param ctx PROJ context, or NULL</span>
+<span class="cm">* @param max_size_MB Maximum size, in mega-bytes (1024*1024 bytes), or</span>
+<span class="cm">*                    negative value to set unlimited size.</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">proj_grid_cache_set_max_size</span><span class="p">(</span><span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">max_size_MB</span><span class="p">);</span>
+
+<span class="cm">/** Override, for the considered context, the time-to-live delay for</span>
+<span class="cm">* re-checking if the cached properties of files are still up-to-date.</span>
+<span class="cm">*</span>
+<span class="cm">* @param ctx PROJ context, or NULL</span>
+<span class="cm">* @param ttl_seconds Delay in seconds. Use negative value for no expiration.</span>
+<span class="cm">*/</span>
+<span class="kt">void</span> <span class="nf">proj_grid_cache_set_ttl</span><span class="p">(</span><span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">,</span> <span class="kt">int</span> <span class="n">ttl_seconds</span><span class="p">);</span>
+
+<span class="cm">/** Clear the local cache of grid chunks.</span>
+<span class="cm"> *</span>
+<span class="cm"> * @param ctx PROJ context, or NULL.</span>
+<span class="cm"> */</span>
+<span class="kt">void</span> <span class="nf">proj_grid_cache_clear</span><span class="p">(</span><span class="n">PJ_CONTEXT</span><span class="o">*</span> <span class="n">ctx</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The planned database structure is:</p>
+<div class="highlight-sql notranslate"><div class="highlight"><pre><span></span><span class="c1">-- General properties on a file</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">properties</span><span class="p">(</span>
+ <span class="n">url</span>          <span class="nb">TEXT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="n">lastChecked</span>  <span class="k">TIMESTAMP</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="n">fileSize</span>     <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="n">lastModified</span> <span class="nb">TEXT</span><span class="p">,</span>
+ <span class="n">etag</span>         <span class="nb">TEXT</span>
+<span class="p">);</span>
+
+<span class="c1">-- Store chunks of data. To avoid any potential fragmentation of the</span>
+<span class="c1">-- cache, the data BLOB is always set to the maximum chunk size of 16 KB</span>
+<span class="c1">-- (right padded with 0-byte)</span>
+<span class="c1">-- The actual size is stored in chunks.data_size</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">chunk_data</span><span class="p">(</span>
+ <span class="n">id</span>        <span class="nb">INTEGER</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="n">AUTOINCREMENT</span> <span class="k">CHECK</span> <span class="p">(</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span>
+ <span class="k">data</span>      <span class="nb">BLOB</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="c1">-- Record chunks of data by (url, offset)</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">chunks</span><span class="p">(</span>
+ <span class="n">id</span>        <span class="nb">INTEGER</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="n">AUTOINCREMENT</span> <span class="k">CHECK</span> <span class="p">(</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span>
+ <span class="n">url</span>       <span class="nb">TEXT</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="k">offset</span>    <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="n">data_id</span>   <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="n">data_size</span> <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="k">CONSTRAINT</span> <span class="n">fk_chunks_url</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">url</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">properties</span><span class="p">(</span><span class="n">url</span><span class="p">),</span>
+ <span class="k">CONSTRAINT</span> <span class="n">fk_chunks_data</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">data_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">chunk_data</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">);</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">idx_chunks</span> <span class="k">ON</span> <span class="n">chunks</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="k">offset</span><span class="p">);</span>
+
+<span class="c1">-- Doubly linked list of chunks. The next link is to go to the least-recently</span>
+<span class="c1">-- used entries.</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">linked_chunks</span><span class="p">(</span>
+ <span class="n">id</span>        <span class="nb">INTEGER</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="n">AUTOINCREMENT</span> <span class="k">CHECK</span> <span class="p">(</span><span class="n">id</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">),</span>
+ <span class="n">chunk_id</span>  <span class="nb">INTEGER</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+ <span class="n">prev</span>      <span class="nb">INTEGER</span><span class="p">,</span>
+ <span class="k">next</span>      <span class="nb">INTEGER</span><span class="p">,</span>
+ <span class="k">CONSTRAINT</span> <span class="n">fk_links_chunkid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">chunk_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">chunks</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+ <span class="k">CONSTRAINT</span> <span class="n">fk_links_prev</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">prev</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">linked_chunks</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+ <span class="k">CONSTRAINT</span> <span class="n">fk_links_next</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="k">next</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">linked_chunks</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">);</span>
+<span class="k">CREATE</span> <span class="k">INDEX</span> <span class="n">idx_linked_chunks_chunk_id</span> <span class="k">ON</span> <span class="n">linked_chunks</span><span class="p">(</span><span class="n">chunk_id</span><span class="p">);</span>
+
+<span class="c1">-- Head and tail pointers of the linked_chunks. The head pointer is for</span>
+<span class="c1">-- the most-recently used chunk.</span>
+<span class="c1">-- There should be just one row in this table.</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">linked_chunks_head_tail</span><span class="p">(</span>
+  <span class="n">head</span>       <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="n">tail</span>       <span class="nb">INTEGER</span><span class="p">,</span>
+  <span class="k">CONSTRAINT</span> <span class="n">lht_head</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">head</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">linked_chunks</span><span class="p">(</span><span class="n">id</span><span class="p">),</span>
+  <span class="k">CONSTRAINT</span> <span class="n">lht_tail</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tail</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="n">linked_chunks</span><span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">linked_chunks_head_tail</span> <span class="k">VALUES</span> <span class="p">(</span><span class="k">NULL</span><span class="p">,</span> <span class="k">NULL</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>The chunks table will store 16 KB chunks (or less for terminating chunks).
+The linked_chunks and linked_chunks_head_tail table swill act as a doubly linked
+list of chunks, with the least recently used ones at the end of the list, which
+will be evicted when the cache saturates.</p>
+<p>The directory used to locate this database will be ${XDG_DATA_HOME}/proj
+(per <a class="reference external" href="https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html">https://specifications.freedesktop.org/basedir-spec/basedir-spec-latest.html</a>)
+where ${XDG_DATA_HOME} defaults to ${HOME}/.local/share on Unix builds
+and ${LOCALAPPDATA} on Windows builds. Exact details to be sorted out, but
+<a class="reference external" href="https://github.com/ActiveState/appdirs/blob/a54ea98feed0a7593475b94de3a359e9e1fe8fdb/appdirs.py#L45-L97">https://github.com/ActiveState/appdirs/blob/a54ea98feed0a7593475b94de3a359e9e1fe8fdb/appdirs.py#L45-L97</a>
+can be a good reference.</p>
+<p>As this database might be accesse by several threads or processes at the same
+time, the code accessing to it will carefully honour SQLite3 errors regarding
+to locks, to do appropriate retries if another thread/process is currently
+locking the database. Accesses requiring a modification of the database will
+start with a BEGIN IMMEDIATE transaction so as to acquire a write lock.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This database should be hosted on a local disk, not a network one.
+Otherwise SQLite3 locking issues are to be expected.</p>
+</div>
+</div>
+<div class="section" id="cdn-provider">
+<h3>CDN provider<a class="headerlink" href="#cdn-provider" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://aws.amazon.com/opendata/public-datasets/">Amazon Public Datasets</a>
+has offered to be a storage and CDN provider.</p>
+<p>The program covers storage and egress (bandwidth) of the data.
+They generally don’t allow usage of CloudFront
+(their CDN) as part of the program (we would usually look to have it covered
+by credits), but in this instance, they would be fine to provide it.
+They’d only ask that we keep the CloudFront URL “visible” (as appropriate for
+the use case) so people can see where the data is hosted in case they go looking.
+Their terms can be seen at <a class="reference external" href="https://aws.amazon.com/service-terms/">https://aws.amazon.com/service-terms/</a> and CloudFront
+has its own, small section. Those terms may change a bit from time to time for
+minor changes. Major changing service terms is assumed to be unfrequent.
+There are also the Public Dataset Program terms at <a class="reference external" href="http://aws.amazon.com/public-datasets/terms/">http://aws.amazon.com/public-datasets/terms/</a>.
+Those also do not effectively change over time and are renewed on a 2 year basis.</p>
+</div>
+<div class="section" id="criteria-for-grid-hosting">
+<h3>Criteria for grid hosting<a class="headerlink" href="#criteria-for-grid-hosting" title="Permalink to this headline">¶</a></h3>
+<p>The grids hosted on the CDN will be exactly the ones collected,
+currently and in the future, by the <a class="reference external" href="https://github.com/OSGeo/proj-datumgrid/">proj-datumgrid</a>
+initiative. In particular, new grids are accepted as long as
+they are released under a license that is compatible with the
+<a class="reference external" href="https://opensource.org/osd-annotated">Open Source Definition</a> and the source
+of the grid is clearly stated and verifiable. Suitable licenses include:</p>
+<ul class="simple">
+<li><p>Public domain</p></li>
+<li><p>X/MIT</p></li>
+<li><p>BSD 2/3/4 clause</p></li>
+<li><p>CC0</p></li>
+<li><p>CC-BY (v3.0 or later)</p></li>
+<li><p>CC-BY-SA (v3.0 or later)</p></li>
+</ul>
+<p>For new grids to be transparently used by the proj_create_crs_to_crs() mechanics,
+they must be registered in the PROJ database (proj.db) in the <code class="docutils literal notranslate"><span class="pre">grid_transformation</span></code> and
+<code class="docutils literal notranslate"><span class="pre">grid_alternatives</span></code> table. The nominal path to have a new record in the grid_transformation
+is to have a transformation being registered in the EPSG dataset (if there is no
+existing one), which will be subsequently imported into the PROJ database.</p>
+</div>
+<div class="section" id="versioning-historical-preservation-of-grids">
+<h3>Versioning, historical preservation of grids<a class="headerlink" href="#versioning-historical-preservation-of-grids" title="Permalink to this headline">¶</a></h3>
+<p>The policy regarding this should be similar to the one applied to
+<a class="reference external" href="https://github.com/OSGeo/proj-datumgrid/">proj-datumgrid</a>, which even if
+not formalized, is around the following lines:</p>
+<ul class="simple">
+<li><p>Geodetic agencies release regularly new version of grids. Typically for the
+USA, NOAA has released GEOID99, GEOID03, GEOID06, GEOID09, GEOID12A, GEOID12B,
+GEOID18 for the NAVD88 to NAD83/NAD83(2011) vertical adjustments. Each of these
+grids is considered by EPSG and PROJ has a separate object, with distinct filenames.
+The release of a new version does not cause the old grid to be automatically removed.
+That said, due to advertized accuracies and supersession rules of the EPSG dataset, the
+most recent grid will generally be used for a CRS -&gt; CRS transformation if the
+user uses proj_create_crs_to_crs() (with the exception that if a VERT_CRS WKT
+includes a GEOID_MODEL known to PROJ, an old version of the grid will be used).
+If the user specifies a whole pipeline with an explicit grid name, it will be
+of course strictly honoured.
+As time goes, the size of the datasets managed by proj-datumgrid will be increasing,
+we will have to explore on we managed that for the distributed .zip / .tar.gz
+archives. This should not be a concern for CDN hosted content.</p></li>
+<li><p>In case software-related conversion errors from the original grid format to the
+one used by PROJ (be it GTX, NTv2 or GeoTIFF) would happen, the previous erroneous
+version of the dataset would be replaced by the corrected one. In that situation,
+this might have an effect with the local on-disk caching of remote grids. We will
+have to see with the CDN providers used if we can use for example the ETag HTTP header
+on the client to detect a change, so that old cached content is not erroneously
+reused (if not possible, we’ll have to use some text file listing the grid names and their
+current md5sum)</p></li>
+</ul>
+</div>
+</div>
+<div class="section" id="grids-in-geotiff-format">
+<h2>Grids in GeoTIFF format<a class="headerlink" href="#grids-in-geotiff-format" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="limitations-of-current-formats">
+<h3>Limitations of current formats<a class="headerlink" href="#limitations-of-current-formats" title="Permalink to this headline">¶</a></h3>
+<p>Several formats exist depending on the ad-hoc needs and ideas of the original
+data producer. It would be apropriate to converge on a common format able to
+address the different use cases.</p>
+<ul class="simple">
+<li><p>Not tiled. Tiling is a nice to have propery for cloud-friendly access to
+large files.</p></li>
+<li><p>No support for compression</p></li>
+<li><p>The NTv2 structures is roughly: header of main grid, data of main grid,
+header of subgrid 1, data of subgrid 1, header of subgrid 2, data of subgrid 2,
+etc.Due to the headers being scattered through the file, it is not possibly
+to retrieve with a single HTTP GET request all header information.</p></li>
+<li><p>GTX format has no provision to store metadata besides the minimum georeferencing
+of the grid. NTv2 is a bit richer, but no extensible metadata possible.</p></li>
+</ul>
+</div>
+<div class="section" id="discussion-on-choice-of-format">
+<h3>Discussion on choice of format<a class="headerlink" href="#discussion-on-choice-of-format" title="Permalink to this headline">¶</a></h3>
+<p>We have been made recently aware of other initiatives from the industry to come
+with a common format to store geodetic adjustment data. Some discussions have
+happen recently within the OGC CRS Working group. Past efforts include the
+Esri’s proposed Geodetic data Grid eXchange Format, GGXF, briefly mentionned at
+page 86 of
+<a class="reference external" href="https://iag.dgfi.tum.de/fileadmin/IAG-docs/Travaux2015/01_Travaux_Template_Comm_1_tvd.pdf">https://iag.dgfi.tum.de/fileadmin/IAG-docs/Travaux2015/01_Travaux_Template_Comm_1_tvd.pdf</a>
+and page 66 of <a class="reference external" href="ftp://ftp.iaspei.org/pub/meetings/2010-2019/2015-Prague/IAG-Geodesy.pdf">ftp://ftp.iaspei.org/pub/meetings/2010-2019/2015-Prague/IAG-Geodesy.pdf</a>
+The current trend of those works would be to use a netCDF / HDF5 container.</p>
+<p>So, for the sake of completness, we list hereafter a few potential candidate
+formats and their pros and cons.</p>
+<div class="section" id="tiff-geotiff">
+<h4>TIFF/GeoTIFF<a class="headerlink" href="#tiff-geotiff" title="Permalink to this headline">¶</a></h4>
+<p>Strong points:</p>
+<ul class="simple">
+<li><p>TIFF is a well-known and widespread format.</p></li>
+<li><p>The GeoTIFF encoding is a widely industry supported scheme to encode georeferencing.
+It is now a <a class="reference external" href="https://www.opengeospatial.org/standards/geotiff">OGC standard</a></p></li>
+<li><p>There are independent initiatives to share grids as GeoTIFF, like
+<a class="reference external" href="https://www.agisoft.com/downloads/geoids/">that one</a></p></li>
+<li><p>TIFF can contain multiple images (IFD: Image File Directory) chained together.
+This is the mechanism used for multiple-page scanned TIFF files, or in the
+geospatial field to store multi-resolution/pyramid rasters. So it can be
+used with sub-grids as in the NTv2 format.</p></li>
+<li><p>Extensive experience with the TIFF format, and its appropriatness for network
+access, in particular through the <a class="reference external" href="https://www.cogeo.org/">Cloud Optimized GeoTIFF initiative</a>
+whose layout can make use of sub-grids efficient from a network access
+perspective, because grid headers can be put at the beginning of the file, and
+so being retrieved in a single HTTP GET request.</p></li>
+<li><p>TIFF can be tiled.</p></li>
+<li><p>TIFF can be compressed. Commonly found compression formats arre DEFLATE, LZW,
+combined with differential integer or floating point predictors</p></li>
+<li><p>A TIFF image can contain a configurable number of channels/bands/samples.
+In the rest of the document, we will use the sample terminology for this concept.</p></li>
+<li><p>TIFF sample organization can be configured: either the values of different
+samples are packed together (<a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/planarconfiguration.html">PlanarConfiguration</a> = Contig), or put in separate tiles/strips
+(PlanarConfiguration = Separate)</p></li>
+<li><p>libtiff is a dependency commonly found in binary distributions of the
+“ecosystem” to which PROJ belongs too</p></li>
+<li><p>libtiff benefits from many years of efforts to increase its security, for
+example being integrated to the oss-fuzz initiative. Given the potential
+fetching of grids, using security tested components is an important concern.</p></li>
+<li><p>Browser-side: there are “ports” of libtiff/libgeotiff in the browser such
+as <a class="reference external" href="https://geotiffjs.github.io/">https://geotiffjs.github.io/</a> which could potentially make a port of PROJ
+easier.</p></li>
+</ul>
+<p>Weak points:</p>
+<ul class="simple">
+<li><p>we cannot use libgeotiff, since it depends itself on PROJ (to resolve CRS
+or components of CRS from their EPSG codes). That said, for PROJ intended
+use, we only need to decode the ModelTiepointTag and ModelPixelScaleTag TIFF
+tags, so this can be done “at hand”</p></li>
+<li><p>the metadata capabilities of TIFF baseline are limited. The TIFF format comes
+with a predefined set of metadata items whose keys have numeric values. That
+said, GDAL has used for the last 20 years or so a dedicated tag,
+<a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/gdal_metadata.html">GDAL_METADATA</a>
+of code 42112 that holds a XML-formatted string being able to store arbitrary
+key-pair values.</p></li>
+</ul>
+</div>
+<div class="section" id="netcdf-v3">
+<h4>netCDF v3<a class="headerlink" href="#netcdf-v3" title="Permalink to this headline">¶</a></h4>
+<p>Strong points:</p>
+<ul class="simple">
+<li><p>The binary format description as given in
+<a class="reference external" href="http://portal.opengeospatial.org/files/?artifact_id=43734">OGC 10-092r3</a> is relatively simple,
+but it would still probably be necessary to use libnetcdf-c to access it</p></li>
+<li><p>Metadata can be stored easily in netCDF attributes</p></li>
+</ul>
+<p>Weak points:</p>
+<ul class="simple">
+<li><p>No compression in netCDF v3</p></li>
+<li><p>No tiling in netCDF v3</p></li>
+<li><p>Multi-samples variables are located in different sections of the files
+(correspond to TIFF PlanarConfiguration = Separate)</p></li>
+<li><p>No natural way of having hiearchical / multigrids. They must be encoded as
+separate variables</p></li>
+<li><p>georeferencing in netCDF is somewhat less standardized than TIFF/GeoTIFF.
+The generally used model is <a class="reference external" href="http://cfconventions.org/">the conventions for CF (Climate and Forecast)
+metadata</a>
+but there is nothing really handy in them for simple georeferencing with
+the coordinate of the upper-left pixel and the resolution. The practice is
+to write explict lon and lat variables with all values taken by the grid.
+GDAL has for many years supported a simpler syntax, using a GeoTransform
+attribute.</p></li>
+<li><p>From the format description, its layout could be relatively cloud friendly,
+except that libnetcdf has no API to plug an alternate I/O layer.</p></li>
+<li><p>Most binary distributions of netCDF nowadays are based on libnetcdf v4, which
+implies the HDF5 dependency.</p></li>
+<li><p>From a few issues we identified a few years ago regarding crashes on corrupted
+datasets, we contacted libnetcdf upstream, but they did not seem to be
+interested in addressing those security issues.</p></li>
+</ul>
+</div>
+<div class="section" id="netcdf-v4-hdf5">
+<h4>netCDF v4 / HDF5<a class="headerlink" href="#netcdf-v4-hdf5" title="Permalink to this headline">¶</a></h4>
+<p>Note: The netCDF v4 format is a profile of the HDF5 file format.</p>
+<p>Strong points:</p>
+<ul class="simple">
+<li><p>Compression supported (ZLIB and SZIP predefined)</p></li>
+<li><p>Tiling (chunking) supported</p></li>
+<li><p>Values of Multi-sample variables can be interleaved together (similarly
+to TIFF PlanarConfiguration = Contig) by using compound data types.</p></li>
+<li><p>Hierarchical organization with groups</p></li>
+<li><p>While the netCDF API does not provide an alternate I/O layer, this is
+possible with the HDF5 API.</p></li>
+<li><p>Grids can be indexed by more than 2 dimensions (for current needs, we
+don’t need more than 2D support)</p></li>
+</ul>
+<p>Weak points:</p>
+<ul class="simple">
+<li><p>The <a class="reference external" href="https://support.hdfgroup.org/HDF5/doc/H5.format.html">HDF 5 File format</a>
+is more complex than netCDF v3, and likely more than TIFF. We do not have
+in-depth expertise of it to assess its cloud-friendliness.</p></li>
+<li><p>The ones mentionned for netCDF v3 regarding georeferencing and security apply.</p></li>
+</ul>
+</div>
+<div class="section" id="geopackage">
+<h4>GeoPackage<a class="headerlink" href="#geopackage" title="Permalink to this headline">¶</a></h4>
+<p>As PROJ has already a SQLite3 dependency, GeoPackage could be examined as a
+potential solution.</p>
+<p>Strong points:</p>
+<ul class="simple">
+<li><p>SQLite3 dependency</p></li>
+<li><p>OGC standard</p></li>
+<li><p>Multi-grid capabilities</p></li>
+<li><p>Tiling</p></li>
+<li><p>Compression</p></li>
+<li><p>Metadata capabilities</p></li>
+</ul>
+<p>Weak points:</p>
+<ul class="simple">
+<li><p>GeoPackage mostly address the RGB(A) Byte use case, or via the tile gridded
+data extension, single-sample non-Byte data. No native support for multi-sample
+non-Byte data: each sample should be put in a separate raster table.</p></li>
+<li><p>Experience shows that SQLite3 layout (at least the layout adopted when using
+the standard libsqlite3) is not cloud friendly. Indices may be scattered in
+different places of the file.</p></li>
+</ul>
+</div>
+<div class="section" id="conclusions">
+<h4>Conclusions<a class="headerlink" href="#conclusions" title="Permalink to this headline">¶</a></h4>
+<p>The 2 major contenders regarding our goals and constraints are GeoTIFF and HDF5.
+Given past positive experience and its long history, GeoTIFF remains our preferred
+choice.</p>
+</div>
+</div>
+<div class="section" id="description-of-the-proj-geotiff-format">
+<span id="description-geotiff-format"></span><h3>Description of the PROJ GeoTIFF format<a class="headerlink" href="#description-of-the-proj-geotiff-format" title="Permalink to this headline">¶</a></h3>
+<p>The general principles that guide the following requirements and recommendations
+are such that files will be properly recognized by PROJ, and also by GDAL which
+is an easy way to inspect such grid files:</p>
+<ul>
+<li><p><a class="reference external" href="https://www.awaresystems.be/imaging/tiff/specification/TIFF6.pdf">TIFF 6.0</a>
+based (could possibly be BigTIFF without code changes, if we ever
+need some day to handle grids larger than 4GB)</p></li>
+<li><p><a class="reference external" href="http://docs.opengeospatial.org/is/19-008r4/19-008r4.html">GeoTIFF 1.1</a> for the georeferencing.
+GeoTIFF 1.1 is a recent standard, compared to the original GeoTIFF 1.0 version,
+but its backward compatibility is excellent, so that should not cause much trouble
+to readers that are not official GeoTIFF 1.1 compliant.</p></li>
+<li><p>Files hosted on the CDN will use a Geographic 2D CRS for the GeoTIFF GeoKeys.
+That CRS is intended to be the interpolation CRS as defined in
+<a class="reference external" href="http://docs.opengeospatial.org/as/18-005r4/18-005r4.html">OGC Abstract Specification Topic 2</a>,
+that is the CRS to which grid values are refered to.</p>
+<p>Given that they will nominally be related to the EPSG dataset, the <a class="reference external" href="http://docs.opengeospatial.org/is/19-008r4/19-008r4.html#_requirements_class_geodeticcrsgeokey">GeodeticCRSGeoKey</a>
+will be used to store the EPSG code of the CRS. If the CRS cannot be reliably
+encoded through that key or other geokeys, the <code class="docutils literal notranslate"><span class="pre">interpolation_crs_wkt</span></code> metadata
+item detailed afterwards should be used.</p>
+<p>This CRS will be generally the source CRS (for geographic to
+geographic horizontal shift grids, or geographic to vertical shift grids), but
+for vertical to vertical CRS adjustment, this will be the geographic CRS to
+which the grid is referenced. In some very rare cases of geographic to vertical
+shift grids, the interpolation CRS might be a geographic CRS that is not the
+same as the source CRS (into which ellipsoidal height are expressed). The only
+instance we have in mind is for the EPSG:7001 “ETRS89 to NAP height (1)” transformation
+using the naptrans2008 VDatum-grid which is referenced to Amersfoort EPSG:4289
+instead of ETRS89…</p>
+<p>On the reading side, PROJ will ignore that information:
+the CRS is already stored in the source_crs or interpolation_crs column of the
+grid_transformation table.</p>
+<p>For geographic to vertical shift files (geoid models), the GeoTIFF 1.1
+convention will be used to store the value of the <a class="reference external" href="http://docs.opengeospatial.org/is/19-008r4/19-008r4.html#_requirements_class_verticalgeokey">VerticalGeoKey</a>
+So a geoid model that apply to WGS 84 EPSG:4979 will have GeodeticCRSGeoKey = 4326
+and VerticalGeoKey = 4979.</p>
+</li>
+<li><p>Files hosted on the CDN will use the GeoTIFF defined <a class="reference external" href="http://docs.opengeospatial.org/is/19-008r4/19-008r4.html#_raster_to_model_coordinate_transformation_requirements">ModelTiepointTag and ModelPixelScaleTag</a> TIFF tags
+to store the coordinates of the upper-left pixel and the resolution of the pixels.
+On the reading side, they will be required and ModelTransformationTag will be ignored.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Regarding anti-meridian handling, a variety of possibilities exist.
+We do not attempt to standardize this and filesh hosted on the CDN will use
+a georeferencing close to the original data producer.
+For example, NOAA vertical grids that apply to Conterminous USA might even have a top-left
+longitude beyond 180 (for consistency with Alaska grids, whose origin is &lt; 180)
+Anti-meridian handling in PROJ has probably issues. This RFC does not attempt
+to address them in particular, as they are believed to be orthogonal to the
+topics it covers, and being mostly implementation issues.</p>
+</div>
+</li>
+<li><p>Files hosted on the CDN will use the <a class="reference external" href="http://docs.opengeospatial.org/is/19-008r4/19-008r4.html#_requirements_class_gtrastertypegeokey">GTRasterTypeGeoKey</a>
+= PixelIsPoint convention.
+This is the convention used by most existing grid formats currently. Note that GDAL
+typically use a PixelIsArea convention (but can handle both conventions), so the
+georeferencing it displays when opening a .gsb or .gtx file appears to have a
+half-pixel shift regarding to the coordinates stored in the original grid file. On
+the reading side, PROJ will accept both conventions (for equivalent georeferencing,
+the value of the origin in a PixelIsArea convention is shifted by a half-pixel
+towards the upper-left direction). Unspecified behaviour if this GeoKey is absent.</p></li>
+<li><p>Files hosted on the CDN will be tiled, presumably with 256x256 tiles (small
+grids that are smaller than 256x256 will use a single strip). On the reading
+side, PROJ will accept TIFF files with any strip or tile organization.
+Tiling is expressed by specifying the TileWidth, TileHeight, TileOffsets
+and TileByteCounts tags. Strip organization is expressed by specifying the
+RowsPerStrip, StripByteCounts and StripOffsets tags.</p></li>
+<li><p>Files hosted on the CDN will use <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/compression.html">Compression</a> = DEFLATE
+or LZW (to be determined, possibly with
+<a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/predictor.html">Predictor</a> = 2
+or 3)
+On the reading side, PROJ will accept TIFF files with any compression method
+(appropriate for the data types and PhotometricInterpretation considered)
+supported by the libtiff build used by PROJ. Of course uncompressed files will be supported.</p></li>
+<li><p>Files hosted on the CDN will use little-endian byte ordering. On the reading
+side, libtiff will transparently handle both little-endian and big-endian
+ordering.</p></li>
+<li><p>Files hosted on the CDN will use PlanarConfiguration=Separate.
+The tools described in a later section will order blocks so that blocks needed
+for a given location are close to each other.
+On the reading side, PROJ will handle also PlanarConfiguration=Contig.</p></li>
+<li><p>Files hosted on the CDN will generally use Float32 (BitsPerSample=32 and SampleFormat=IEEEFP)
+Files may be created using Signed Int 16 (
+<a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/bitspersample.html">BitsPerSample</a> =16 and
+<a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/sampleformat.html">SampleFormat</a> = INT),
+Unsigned Int 16 (BitsPerSample=16 and SampleFormat=UINT), Signed Int 32 or Unsigned Int 32 generally with an
+associate scale/offset.
+On the reading side, only those three data types will be supported as well.</p></li>
+<li><p>Files hosted on the CDN will have a <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/photometricinterpretation.html">PhotometricInterpretation</a> = MinIsBlack.
+It will be assumed, and ignored on the reading side.</p></li>
+<li><p>Files hosted on the CDN will nominally have:</p>
+<blockquote>
+<div><blockquote>
+<div><ul class="simple">
+<li><p><a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/samplesperpixel.html">SamplesPerPixel</a> = 2
+for horizontal shift grid, with the first sample being the longitude offset
+and the second sample being the latitude offset.</p></li>
+<li><p>SamplesPerPixel = 1 for vertical shift grids.</p></li>
+</ul>
+</div></blockquote>
+<p>In the future, different values of SamplesPerPixel may be used to accomodate
+for other needs. For example for deformation models, SamplesPerPixel = 3 to combine
+horizontal and vertical adjustments.
+And even for the current identified needs of horizontal or vertical shifts,
+more samples may be present (to indicate for example uncertainties), but
+will be ignored by PROJ.</p>
+<p>The <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/extrasamples.html">ExtraSamples</a>
+tag should be set to a value of SamplesPerPixel - 1 (given the rules that
+apply for PhotometricInterpretation = MinIsBlack)</p>
+</div></blockquote>
+</li>
+<li><p>The <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/imagedescription.html">ImageDescription</a>
+tag may be used to convey extra information about the name, provenance, version
+and last updated date of the grid.
+Will be set when possible fo files hosted on the CDN.
+Ignored by PROJ.</p></li>
+<li><p>The <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/copyright.html">Copyright</a>
+tag may be used to convey extra information about the copyright and license of the grid.
+Will be set when possible fo files hosted on the CDN.
+Ignored by PROJ.</p></li>
+<li><p>The <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/datetime.html">DateTime</a>
+tag may be used to convey the date at which the file has been created or
+converted. In case of a file conversion, for example from NTv2, this will be
+the date at which the conversion has been performed. The <code class="docutils literal notranslate"><span class="pre">ImageDescription</span></code>
+tag however will contain the latest of the CREATED or UPDATED fields from the NTv2 file.
+Will be set when possible fo files hosted on the CDN.
+Ignored by PROJ.</p></li>
+<li><p>Files hosted on the CDN will use the <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/gdal_nodata.html">GDAL_NODATA</a> tag to encode
+the value of the nodata / missing value, when it applies to the grid.</p>
+<p>If offset and/or scaling is used, the nodata value corresponds to the raw value,
+before applying offset and scaling.
+The value found in this tag, if present, will be honoured (to the extent to
+which current PROJ code makes use of nodata).
+For floating point data, writers are strongly discouraged to use non-finite values
+(+/- infinity, NaN) of nodata to maximimize interoperability.
+The GDAL_NODATA value applies to all samples of a given TIFF IFD.</p>
+</li>
+<li><p>Files hosted on the CDN will use the <a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/gdal_metadata.html">GDAL_METADATA</a> tag to encode extra
+metadata not supported by baseline or extended TIFF.</p>
+<ul>
+<li><p>The root XML node should be <code class="docutils literal notranslate"><span class="pre">GDALMetadata</span></code></p></li>
+<li><p>Zero, one or several child XML nodes <code class="docutils literal notranslate"><span class="pre">Item</span></code> may be present.</p></li>
+<li><p>A Item should have a <code class="docutils literal notranslate"><span class="pre">name</span></code> attribute, and a child text node with its value.
+<code class="docutils literal notranslate"><span class="pre">role</span></code> and <code class="docutils literal notranslate"><span class="pre">sample</span></code> attributes may be present for attributes that have
+a special semantics (recognized by GDAL). The value of <cite>sample</cite> should be
+a integer value between 0 and number_of_samples - 1.</p></li>
+<li><p>Scale and offset to convert integer raw values to floating point values
+may be expressed with XML <cite>Item</cite> elements whose name attribute is respectively
+<code class="docutils literal notranslate"><span class="pre">SCALE</span></code> and <code class="docutils literal notranslate"><span class="pre">OFFSET</span></code>, and their <code class="docutils literal notranslate"><span class="pre">role</span></code> attribute is respectively <code class="docutils literal notranslate"><span class="pre">scale</span></code>
+and <code class="docutils literal notranslate"><span class="pre">offset</span></code>. The decoded value will be: {offset} + {scale} * raw_value_from_geotiff_file</p>
+<p>For a offset value of 1 and scaling of 2, the following payload should be
+stored:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;GDALMetadata&gt;</span>
+    <span class="nt">&lt;Item</span> <span class="na">name=</span><span class="s">&quot;OFFSET&quot;</span> <span class="na">sample=</span><span class="s">&quot;0&quot;</span> <span class="na">role=</span><span class="s">&quot;offset&quot;</span><span class="nt">&gt;</span>1<span class="nt">&lt;/Item&gt;</span>
+    <span class="nt">&lt;Item</span> <span class="na">name=</span><span class="s">&quot;SCALE&quot;</span> <span class="na">sample=</span><span class="s">&quot;0&quot;</span> <span class="na">role=</span><span class="s">&quot;scale&quot;</span><span class="nt">&gt;</span>2<span class="nt">&lt;/Item&gt;</span>
+<span class="nt">&lt;/GDALMetadata&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>The type of the grid must be specified with a <cite>Item</cite> whose <code class="docutils literal notranslate"><span class="pre">name</span></code> is set
+to <code class="docutils literal notranslate"><span class="pre">TYPE</span></code>.</p>
+<p>Values recognized by PROJ currently are:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">HORIZONTAL_OFFSET</span></code>: implies the presence of at least two samples.
+The first sample must contain the latitude offset and the second
+sample must contain the longitude offset.
+Corresponds to PROJ <code class="docutils literal notranslate"><span class="pre">hgridshift</span></code> method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL</span></code>: implies the presence of at least one sample.
+The first sample must contain the vertical adjustment. Must be used when
+the source/interpolation CRS is a Geographic CRS and the target CRS a Vertical CRS.
+Corresponds to PROJ <code class="docutils literal notranslate"><span class="pre">vgridshift</span></code> method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VERTICAL_OFFSET_VERTICAL_TO_VERTICAL</span></code>: implies the presence of at least one sample.
+The first sample must contain the vertical adjustment. Must be used when
+the source and target CRS are Vertical CRS.
+Corresponds to PROJ <code class="docutils literal notranslate"><span class="pre">vgridshift</span></code> method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">GEOCENTRIC_TRANSLATION</span></code>: implies the presence of at least 3 samples.
+The first 3 samples must be respectively the geocentric adjustments along
+the X, Y and Z axis. Must be used when the source and target CRS are
+geocentric CRS. The interpolation CRS must be a geographic CRS.
+Corresponds to PROJ <code class="docutils literal notranslate"><span class="pre">xyzgridshift</span></code> method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">VELOCITY</span></code>: implies the presence of at least 3 samples.
+The first 3 samples must be respectively the velocities along
+the E(ast), N(orth), U(p) axis in the local topocentric coordinate system.
+Corresponds to PROJ <code class="docutils literal notranslate"><span class="pre">deformation</span></code> method.</p></li>
+</ul>
+<p>For example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Item</span> <span class="na">name=</span><span class="s">&quot;TYPE&quot;</span><span class="nt">&gt;</span>HORIZONTAL_OFFSET<span class="nt">&lt;/Item&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>The description of each sample must be specified with a Item whose <code class="docutils literal notranslate"><span class="pre">name</span></code>
+attribute is set to <code class="docutils literal notranslate"><span class="pre">DESCRIPTION</span></code> and <code class="docutils literal notranslate"><span class="pre">role</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">description</span></code>.</p>
+<p>Values recognized by PROJ for this Item are currently:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">latitude_offset</span></code>: valid for TYPE=HORIZONTAL_OFFSET. Sample values should be
+the value to add a latitude expressed in the CRS encoded in the GeoKeys
+to obtain a latitude value expressed in the target CRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">longitude_offset</span></code>: valid for TYPE=HORIZONTAL_OFFSET. Sample values should be
+the value to add a longitude expressed in the CRS encoded in the GeoKeys
+to obtain a longitude value expressed in the target CRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">geoid_undulation</span></code>: valid for TYPE=VERTICAL_OFFSET_GEOGRAPHIC_TO_VERTICAL.
+For a source CRS being a geographic CRS and a target CRS being a vertical CRS,
+sample values should be the value to add to a geoid-related height (that
+is expressed in the target CRS) to
+get an ellipsoidal height (that is expressed in the source CRS), also
+called the geoid undulation.
+Note the possible confusion related to what is the source CRS and target CRS and
+the semantics of the value stored (to convert from the source to the target,
+one must subtract the value contained in the grid). This is the convention
+used by the <a class="reference external" href="https://www.epsg-registry.org/export.htm?gml=urn:ogc:def:method:EPSG::9665">EPSG:9665</a>
+operation method.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">vertical_offset</span></code>: valid for TYPE=VERTICAL_OFFSET_VERTICAL_TO_VERTICAL.
+For a source and target CRS being vertical CRS,
+sample values should be the value to add to an elevation expressed in the
+source CRS to obtain a longitude value expressed in the target CRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">x_translation</span></code> / <code class="docutils literal notranslate"><span class="pre">y_translation</span></code> / <code class="docutils literal notranslate"><span class="pre">z_translation</span></code>: valid for
+TYPE=GEOCENTRIC_TRANSLATION.
+Sample values should be the value to add to the input geocentric coordinates
+expressed in the source CRS to geocentric coordinates expressed in the target CRS.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">east_velocity</span></code> / <code class="docutils literal notranslate"><span class="pre">north_velocity</span></code> / <code class="docutils literal notranslate"><span class="pre">up_velocity</span></code>: valid for
+TYPE=VELOCITY.
+Sample values should be the velocity in a linear/time unit in a ENU local
+topocentric coordinate system.</p></li>
+</ul>
+<p>For example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Item</span> <span class="na">name=</span><span class="s">&quot;DESCRIPTION&quot;</span> <span class="na">sample=</span><span class="s">&quot;0&quot;</span> <span class="na">role=</span><span class="s">&quot;description&quot;</span><span class="nt">&gt;</span>latitude_offset<span class="nt">&lt;/Item&gt;</span>
+<span class="nt">&lt;Item</span> <span class="na">name=</span><span class="s">&quot;DESCRIPTION&quot;</span> <span class="na">sample=</span><span class="s">&quot;1&quot;</span> <span class="na">role=</span><span class="s">&quot;description&quot;</span><span class="nt">&gt;</span>longitude_offset<span class="nt">&lt;/Item&gt;</span>
+</pre></div>
+</div>
+<p>Other values may be used (not used by PROJ):</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">latitude_offset_accuracy</span></code>: valid for TYPE=HORIZONTAL_OFFSET. Sample values should be
+the accuracy of corresponding latitude_offset samples. Generally in metre (if converted from NTv2)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">longitude_offset_accuracy</span></code>: valid for TYPE=HORIZONTAL_OFFSET. Sample values should be
+the accuracy of corresponding longitude_offset samples. Generally in metre (if converted from NTv2)</p></li>
+</ul>
+</li>
+<li><p>The sign convention for the values of the <code class="docutils literal notranslate"><span class="pre">longitude_offset</span></code> channel
+should be indicated with an Item named <code class="docutils literal notranslate"><span class="pre">positive_value</span></code> whose value
+can be <code class="docutils literal notranslate"><span class="pre">west</span></code> or <code class="docutils literal notranslate"><span class="pre">east</span></code>. NTv2 products originally use a <code class="docutils literal notranslate"><span class="pre">west</span></code>
+convention, but when converting from them to GeoTIFF, the sign of those
+samples will be inverted so they use a more natural <code class="docutils literal notranslate"><span class="pre">east</span></code> convention.
+If this item is absent, the default value is <code class="docutils literal notranslate"><span class="pre">east</span></code>.</p></li>
+<li><p>The unit of the values stored in the grid must be specified for each
+sample through an Item of name <code class="docutils literal notranslate"><span class="pre">UNITTYPE</span></code> and role <code class="docutils literal notranslate"><span class="pre">unittype</span></code>
+Valid values should be the name of entries from the EPSG <code class="docutils literal notranslate"><span class="pre">unitofmeasure</span></code>
+table. To maximize interoperability, writers are strongly encouraged to
+limit themselves to the following values:</p>
+<p>For linear units:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">metre</span></code> (default value assumed if absent for vertical shift grid files, and value used for files stored on PROJ CDN)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">US</span> <span class="pre">survey</span> <span class="pre">foot</span></code></p></li>
+</ul>
+<p>For angular units:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">degree</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">arc-second</span></code> (default value assumed if absent for longitude and latitude offset samples of horizontal shift grid files, and value used for files stored on PROJ CDN)</p></li>
+</ul>
+<p>For velocity units:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">millimetres</span> <span class="pre">per</span> <span class="pre">year</span></code></p></li>
+</ul>
+<p>The longitude and latitude offset samples should use the same unit.
+The geocentric translation samples should use the same unit.
+The velocity samples should use the same unit.</p>
+<p>Example:</p>
+<div class="highlight-xml notranslate"><div class="highlight"><pre><span></span><span class="nt">&lt;Item</span> <span class="na">name=</span><span class="s">&quot;UNITTYPE&quot;</span> <span class="na">sample=</span><span class="s">&quot;0&quot;</span> <span class="na">role=</span><span class="s">&quot;unittype&quot;</span><span class="nt">&gt;</span>arc-second<span class="nt">&lt;/Item&gt;</span>
+<span class="nt">&lt;Item</span> <span class="na">name=</span><span class="s">&quot;UNITTYPE&quot;</span> <span class="na">sample=</span><span class="s">&quot;1&quot;</span> <span class="na">role=</span><span class="s">&quot;unittype&quot;</span><span class="nt">&gt;</span>arc-second<span class="nt">&lt;/Item&gt;</span>
+</pre></div>
+</div>
+</li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">target_crs_epsg_code</span></code> metadata item should be present.
+For a horizontal shift grid, this is the EPSG
+code of the target geographic CRS. For a vertical shift grid, this is the
+EPSG code of a the target vertical CRS.
+If the target CRS has no associated EPSG code, <code class="docutils literal notranslate"><span class="pre">target_crs_wkt</span></code> must be
+used.
+Ignored by PROJ currently.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">target_crs_wkt</span></code> metadata item must be present if the
+<code class="docutils literal notranslate"><span class="pre">target_crs_epsg_code</span></code> cannot be used.
+Its value should be a valid WKT string according to
+<a class="reference external" href="http://docs.opengeospatial.org/is/12-063r5/12-063r5.html">WKT:2015</a>
+or <a class="reference external" href="hhttp://docs.opengeospatial.org/is/18-010r7/18-010r7.html">WKT:2019</a>
+Ignored by PROJ currently.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">source_crs_epsg_code</span></code> metadata item must be present if the source
+and interpolation CRS are not the same (typical use case is vertical CRS to vertical CRS
+transformation), because the GeoKeys encode the interpolation CRS and not the source CRS.
+If the source CRS has no associated EPSG code, <code class="docutils literal notranslate"><span class="pre">source_crs_wkt</span></code> must be
+used.
+Ignored by PROJ currently.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">source_crs_wkt</span></code> metadata item must be present if the
+<code class="docutils literal notranslate"><span class="pre">source_crs_epsg_code</span></code> cannot be used.
+Its value should be a valid WKT string according to WKT:2015 or WKT:2019.
+Ignored by PROJ currently.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">interpolation_crs_wkt</span></code> metadata item may be present if the GeoKeys
+cannot be used to express reliably the interpolation CRS.
+Its value should be a valid WKT string according to WKT:2015 or WKT:2019.
+Ignored by PROJ currently.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">recommended_interpolation_method</span></code> metadata item may be present to
+describe the method to use to interpolation values at locations not
+coincident with nodes stored in the grid file. Potential values: <code class="docutils literal notranslate"><span class="pre">bilinear</span></code>,
+<code class="docutils literal notranslate"><span class="pre">bicubic</span></code>.
+Ignored by PROJ currently.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">area_of_use</span></code> metadata item can be used to indicate plain text information
+about the area of use of the grid (like “USA - Wisconsin”). In case of multiple
+subgrids, it should be set only on the first one, but applies to the whole
+set of grids, not just the first one.</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">grid_name</span></code> metadata item should be present if there are
+subgrids for this grid (that is grids whose extent is contained in the extent
+of this grid), or if this is a subgrid.
+It is intended to be a relatively short identifier
+Will be ignored by PROJ (this information can be inferred by the grids extent)</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">parent_grid_name</span></code> metadata item should be present if this is a
+subgrid and its value should be equal to the paren’s <code class="docutils literal notranslate"><span class="pre">grid_name</span></code>
+Will be ignored by PROJ (this information can be inferred by the grids extent)</p></li>
+<li><p>The <code class="docutils literal notranslate"><span class="pre">number_of_nested_grids</span></code> metadata item should be present if there are
+subgrids for this grid (that is grids whose extent is contained in the extent
+of this grid).
+Will be ignored by PROJ (this information can be inferred by the grids extent)</p></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="example">
+<h3>Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntf_r93.tif">https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntf_r93.tif</a> has
+been converted from <a class="reference external" href="https://github.com/OSGeo/proj-datumgrid/blob/master/ntf_r93.gsb">https://github.com/OSGeo/proj-datumgrid/blob/master/ntf_r93.gsb</a>
+with <a class="reference external" href="https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntv2_to_gtiff.py">https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntv2_to_gtiff.py</a></p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ tiffinfo ntf_r93.tif
+
+TIFF Directory at offset 0x4e (78)
+Image Width: 156 Image Length: 111
+Bits/Sample: 32
+Sample Format: IEEE floating point
+Compression Scheme: AdobeDeflate
+Photometric Interpretation: min-is-black
+Extra Samples: 3&lt;unspecified, unspecified, unspecified&gt;
+Samples/Pixel: 4
+Rows/Strip: 111
+Planar Configuration: separate image planes
+ImageDescription: NTF (EPSG:4275) to RGF93 (EPSG:4171). Converted from ntf_r93.gsb (version IGN07_01, last updated on 2007-10-31)
+DateTime: 2019:12:09 00:00:00
+Copyright: Derived from work by IGN France. Open License https://www.etalab.gouv.fr/wp-content/uploads/2014/05/Open_Licence.pdf
+Tag 33550: 0.100000,0.100000,0.000000
+Tag 33922: 0.000000,0.000000,0.000000,-5.500000,52.000000,0.000000
+Tag 34735: 1,1,1,3,1024,0,1,2,1025,0,1,2,2048,0,1,4275
+Tag 42112: &lt;GDALMetadata&gt;
+&lt;Item name=&quot;grid_name&quot;&gt;FRANCE&lt;/Item&gt;
+&lt;Item name=&quot;target_crs_epsg_code&quot;&gt;4171&lt;/Item&gt;
+&lt;Item name=&quot;TYPE&quot;&gt;HORIZONTAL_OFFSET&lt;/Item&gt;
+&lt;Item name=&quot;UNITTYPE&quot; sample=&quot;0&quot; role=&quot;unittype&quot;&gt;arc-second&lt;/Item&gt;
+&lt;Item name=&quot;DESCRIPTION&quot; sample=&quot;0&quot; role=&quot;description&quot;&gt;latitude_offset&lt;/Item&gt;
+&lt;Item name=&quot;positive_value&quot; sample=&quot;1&quot;&gt;east&lt;/Item&gt;
+&lt;Item name=&quot;UNITTYPE&quot; sample=&quot;1&quot; role=&quot;unittype&quot;&gt;arc-second&lt;/Item&gt;
+&lt;Item name=&quot;DESCRIPTION&quot; sample=&quot;1&quot; role=&quot;description&quot;&gt;longitude_offset&lt;/Item&gt;
+&lt;Item name=&quot;UNITTYPE&quot; sample=&quot;2&quot; role=&quot;unittype&quot;&gt;arc-second&lt;/Item&gt;
+&lt;Item name=&quot;DESCRIPTION&quot; sample=&quot;2&quot; role=&quot;description&quot;&gt;latitude_offset_accuracy&lt;/Item&gt;
+&lt;Item name=&quot;UNITTYPE&quot; sample=&quot;3&quot; role=&quot;unittype&quot;&gt;arc-second&lt;/Item&gt;
+&lt;Item name=&quot;DESCRIPTION&quot; sample=&quot;3&quot; role=&quot;description&quot;&gt;longitude_offset_accuracy&lt;/Item&gt;
+&lt;/GDALMetadata&gt;
+
+Predictor: floating point predictor 3 (0x3)
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ listgeo ntf_r93.tif
+
+Geotiff_Information:
+    Version: 1
+    Key_Revision: 1.1
+    Tagged_Information:
+        ModelTiepointTag (2,3):
+            0                 0                 0
+            -5.5              52                0
+        ModelPixelScaleTag (1,3):
+            0.1               0.1               0
+        End_Of_Tags.
+    Keyed_Information:
+        GTModelTypeGeoKey (Short,1): ModelTypeGeographic
+        GTRasterTypeGeoKey (Short,1): RasterPixelIsPoint
+        GeodeticCRSGeoKey (Short,1): Code-4275 (NTF)
+        End_Of_Keys.
+    End_Of_Geotiff.
+
+GCS: 4275/NTF
+Datum: 6275/Nouvelle Triangulation Francaise
+Ellipsoid: 7011/Clarke 1880 (IGN) (6378249.20,6356515.00)
+Prime Meridian: 8901/Greenwich (0.000000/  0d 0&#39; 0.00&quot;E)
+Projection Linear Units: User-Defined (1.000000m)
+
+Corner Coordinates:
+Upper Left    (  5d30&#39; 0.00&quot;W, 52d 0&#39; 0.00&quot;N)
+Lower Left    (  5d30&#39; 0.00&quot;W, 40d54&#39; 0.00&quot;N)
+Upper Right   ( 10d 6&#39; 0.00&quot;E, 52d 0&#39; 0.00&quot;N)
+Lower Right   ( 10d 6&#39; 0.00&quot;E, 40d54&#39; 0.00&quot;N)
+Center        (  2d18&#39; 0.00&quot;E, 46d27&#39; 0.00&quot;N)
+</pre></div>
+</div>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>$ gdalinfo ntf_r93.tif
+
+Driver: GTiff/GeoTIFF
+Files: ntf_r93.tif
+Size is 156, 111
+Coordinate System is:
+GEOGCRS[&quot;NTF&quot;,
+    DATUM[&quot;Nouvelle Triangulation Francaise&quot;,
+        ELLIPSOID[&quot;Clarke 1880 (IGN)&quot;,6378249.2,293.466021293627,
+            LENGTHUNIT[&quot;metre&quot;,1]]],
+    PRIMEM[&quot;Greenwich&quot;,0,
+        ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+    CS[ellipsoidal,2],
+        AXIS[&quot;geodetic latitude (Lat)&quot;,north,
+            ORDER[1],
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+        AXIS[&quot;geodetic longitude (Lon)&quot;,east,
+            ORDER[2],
+            ANGLEUNIT[&quot;degree&quot;,0.0174532925199433]],
+    ID[&quot;EPSG&quot;,4275]]
+Data axis to CRS axis mapping: 2,1
+Origin = (-5.550000000000000,52.049999999999997)
+Pixel Size = (0.100000000000000,-0.100000000000000)
+Metadata:
+  AREA_OR_POINT=Point
+  grid_name=FRANCE
+  target_crs_epsg_code=4171
+  TIFFTAG_DATETIME=2019:12:09 00:00:00
+  TIFFTAG_IMAGEDESCRIPTION=NTF (EPSG:4275) to RGF93 (EPSG:4171). Converted from ntf_r93.gsb (version IGN07_01, last updated on 2007-10-31)
+  TYPE=HORIZONTAL_OFFSET
+Image Structure Metadata:
+  COMPRESSION=DEFLATE
+  INTERLEAVE=BAND
+Corner Coordinates:
+Upper Left  (  -5.5500000,  52.0500000) (  5d33&#39; 0.00&quot;W, 52d 3&#39; 0.00&quot;N)
+Lower Left  (  -5.5500000,  40.9500000) (  5d33&#39; 0.00&quot;W, 40d57&#39; 0.00&quot;N)
+Upper Right (  10.0500000,  52.0500000) ( 10d 3&#39; 0.00&quot;E, 52d 3&#39; 0.00&quot;N)
+Lower Right (  10.0500000,  40.9500000) ( 10d 3&#39; 0.00&quot;E, 40d57&#39; 0.00&quot;N)
+Center      (   2.2500000,  46.5000000) (  2d15&#39; 0.00&quot;E, 46d30&#39; 0.00&quot;N)
+Band 1 Block=156x111 Type=Float32, ColorInterp=Gray
+  Description = latitude_offset
+  Unit Type: arc-second
+Band 2 Block=156x111 Type=Float32, ColorInterp=Undefined
+  Description = longitude_offset
+  Unit Type: arc-second
+  Metadata:
+    positive_value=east
+Band 3 Block=156x111 Type=Float32, ColorInterp=Undefined
+  Description = latitude_offset_accuracy
+  Unit Type: arc-second
+Band 4 Block=156x111 Type=Float32, ColorInterp=Undefined
+  Description = longitude_offset_accuracy
+  Unit Type: arc-second
+</pre></div>
+</div>
+</div>
+<div class="section" id="multi-grid-storage">
+<h3>Multi-grid storage<a class="headerlink" href="#multi-grid-storage" title="Permalink to this headline">¶</a></h3>
+<p>Formats like NTv2 can contain multiple subgrids. This can be transposed to
+TIFF by using several IFD chained together with the last 4 bytes (or 8 bytes
+for BigTIFF) of an IFD pointing to the offset of the next one.</p>
+<p>The first IFD should have a full description according to the
+<a class="reference internal" href="#description-geotiff-format"><span class="std std-ref">Description of the PROJ GeoTIFF format</span></a>.
+Subsequent IFD might have a more compact description, omitting for example, CRS
+information if it is identical to the main IFD (which should be the case for
+the currently envisionned use cases), or Copyright / ImageDescription metadata
+items.</p>
+<p>Each IFD will have its
+<a class="reference external" href="https://www.awaresystems.be/imaging/tiff/tifftags/newsubfiletype.html">NewSubfileType</a>
+tag set to 0.</p>
+<p>If a low-resolution grid is available, it should be put before subgrids of
+higher-resolution in the chain of IFD linking. On reading, PROJ will use the
+value from the highest-resoluted grid that contains the point of interest.</p>
+<p>For efficient reading from the network, files hosted on the CDN will use
+a layout similar to the one described in the <a class="reference external" href="https://gdal.org/drivers/raster/cog.html#low-level">low level paragraph of the Cloud Optimized GeoTIFF
+GDAL driver page</a></p>
+<p>The layout for a file converted from NTv2 will for example be:</p>
+<ul class="simple">
+<li><p>TIFF/BigTIFF header/signature and pointer to first IFD (Image File Directory)</p></li>
+<li><p>“ghost area” indicating the generated process</p></li>
+<li><p>IFD of the first grid, followed by TIFF tags values, excluding the TileOffsets and TileByteCounts arrays</p></li>
+<li><p>…</p></li>
+<li><p>IFD of the last grid, followed by TIFF tags values, excluding the GDAL_METADATA tag, TileOffsets and TileByteCounts arrays</p></li>
+<li><p>TileOffsets and TileByteCounts arrays for first IFD</p></li>
+<li><p>…</p></li>
+<li><p>TileOffsets and TileByteCounts arrays for last IFD</p></li>
+<li><p>Value of GDAL_METADATA tag for IFDs following the first IFD</p></li>
+<li><p>First IFD: Data corresponding to latitude offset of Block_0_0</p></li>
+<li><p>First IFD: Data corresponding to longitude offset of Block_0_0</p></li>
+<li><p>First IFD: Data corresponding to latitude offset of Block_0_1</p></li>
+<li><p>First IFD: Data corresponding to longitude offset of Block_0_1</p></li>
+<li><p>…</p></li>
+<li><p>First IFD: Data corresponding to latitude offset of Block_n_m</p></li>
+<li><p>First IFD: Data corresponding to longitude offset of Block_n_m</p></li>
+<li><p>…</p></li>
+<li><p>Last IFD: Data corresponding to latitude offset of Block_0_0</p></li>
+<li><p>Last IFD: Data corresponding to longitude offset of Block_0_0</p></li>
+<li><p>Last IFD: Data corresponding to latitude offset of Block_0_1</p></li>
+<li><p>Last IFD: Data corresponding to longitude offset of Block_0_1</p></li>
+<li><p>…</p></li>
+<li><p>Last IFD: Data corresponding to latitude offset of Block_n_m</p></li>
+<li><p>Last IFD: Data corresponding to longitude offset of Block_n_m</p></li>
+</ul>
+<p>If longitude_offset_accuracy and latitude_offset_accuracy are present, this
+will be followed by:</p>
+<ul class="simple">
+<li><p>First IFD: Data corresponding to latitude offset accuracy of Block_0_0</p></li>
+<li><p>First IFD: Data corresponding to longitude offset accuracy of Block_0_0</p></li>
+<li><p>…</p></li>
+<li><p>First IFD: Data corresponding to latitude offset accuracy of Block_n_m</p></li>
+<li><p>First IFD: Data corresponding to longitude offset accuracy of Block_n_m</p></li>
+<li><p>…</p></li>
+<li><p>Last IFD: Data corresponding to latitude offset accuracy of Block_0_0</p></li>
+<li><p>Last IFD: Data corresponding to longitude offset accuracy of Block_0_0</p></li>
+<li><p>…</p></li>
+<li><p>Last IFD: Data corresponding to latitude offset accuracy of Block_n_m</p></li>
+<li><p>Last IFD: Data corresponding to longitude offset accuracy of Block_n_m</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>TIFF has another mechanism to link IFDs, the SubIFD tag. This potentially
+enables to define a hiearchy of IFDs (similar to HDF5 groups). There is no
+support for that in most TIFF-using software, notably GDAL, and no compelling
+need to have a nested hiearchy, so “flat” organization with the standard IFD chaining
+mechanism is adopted.</p>
+</div>
+</div>
+<div class="section" id="examples-of-multi-grid-dataset">
+<h3>Examples of multi-grid dataset<a class="headerlink" href="#examples-of-multi-grid-dataset" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="https://github.com/rouault/sample_proj_gtiff_grids/blob/master/GDA94_GDA2020_conformal.tif">https://github.com/rouault/sample_proj_gtiff_grids/blob/master/GDA94_GDA2020_conformal.tif</a> has
+been converted from <a class="reference external" href="https://github.com/OSGeo/proj-datumgrid/blob/master/oceania/GDA94_GDA2020_conformal.gsb">https://github.com/OSGeo/proj-datumgrid/blob/master/oceania/GDA94_GDA2020_conformal.gsb</a>
+with <a class="reference external" href="https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntv2_to_gtiff.py">https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntv2_to_gtiff.py</a></p>
+<p>It contains 5 subgrids. All essential metadata to list the subgrids and their
+georeferencing is contained within the first 3 KB of the file.</p>
+<p>The file size is 4.8 MB using DEFLATE compression and floating-point predictor.
+To be compared with the 83 MB of the original .gsb file.</p>
+<p><a class="reference external" href="https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntv2_0.tif">https://github.com/rouault/sample_proj_gtiff_grids/blob/master/ntv2_0.tif</a>  has
+been converted from <a class="reference external" href="https://github.com/OSGeo/proj-datumgrid/blob/master/north-america/ntv2_0.gsb">https://github.com/OSGeo/proj-datumgrid/blob/master/north-america/ntv2_0.gsb</a></p>
+<p>It contains 114 subgrids. All essential metadata to list the subgrids and their
+georeferencing is contained within the first 40 KB of the file.</p>
+</div>
+<div class="section" id="tooling">
+<h3>Tooling<a class="headerlink" href="#tooling" title="Permalink to this headline">¶</a></h3>
+<p>A script will be deveoped to accept a list of individual grids to combine
+together into a single file.</p>
+<p>A ntv2_to_gtiff.py convenience script will be created to convert NTv2 grids,
+including their subgrids, to the above
+described GeoTIFF layout.</p>
+<p>A validation Python script will be created to check that a file meets the above
+described requirements and recommendations.</p>
+</div>
+<div class="section" id="build-requirements">
+<h3>Build requirements<a class="headerlink" href="#build-requirements" title="Permalink to this headline">¶</a></h3>
+<p>The minimum libtiff version will be 4.0 (RHEL 7 ships with libtiff 4.0.3).
+To be able to read grids stored on the CDN, libtiff will need to build against
+zlib to have DEFLATE and LZW suport, which is met by all known binary distributions
+of libtiff.</p>
+<p>The libtiff dependency can be disabled at build time, but this must be
+an explicit setting of configure/cmake as the resulting builds have less functionality.</p>
+</div>
+</div>
+<div class="section" id="dropping-grid-catalog-functionality">
+<h2>Dropping grid catalog functionality<a class="headerlink" href="#dropping-grid-catalog-functionality" title="Permalink to this headline">¶</a></h2>
+<p>While digging through existing code, I more or less discovered that the PROJ
+code base has the concept of a grid catalog. This is a feature apparently triggered by
+using the +catalog=somefilename.csv in a PROJ string, where the CSV file list
+grid names, their extent, priority and date. It seems to be an alternative to using
++nadgrids with multiple grids, with the extra ability to interpolate shift values between
+several grids if a +date parameter is provided and the grid catalog mentions a
+date for each grids.
+It was added in June 2012 per <a class="reference external" href="https://github.com/OSGeo/PROJ/commit/fcb186942ec8532655ff6cf4cc990e5da669a3bc">commit fcb186942ec8532655ff6cf4cc990e5da669a3bc</a></p>
+<p>This feature is likely unknown to most users as there is no known documentation for
+it (neither in current documentation, nor in <a class="reference external" href="https://web.archive.org/web/20160601000000*/http://trac.osgeo.org/proj/wiki/GenParms">historic one</a>).
+It is not either tested by PROJ tests, so its working status is unknown. It would
+likely make implementation of this RFC easier if this was removed. This would result in
+completely dropping the gridcatalog.cpp and gc_reader.cpp files, their call sites
+and the catalog_name and datum_date parameter from the PJ structure.</p>
+<p>In case similar functionality would be be needed, it might be later reintroduced
+as an extra mode of <a class="reference internal" href="../../operations/transformations/hgridshift.html#hgridshift"><span class="std std-ref">Horizontal grid shift</span></a>, or using a dedicated transformation method,
+similarly to the <a class="reference internal" href="../../operations/transformations/deformation.html#deformation"><span class="std std-ref">Kinematic datum shifting utilizing a deformation model</span></a> one,
+and possibly combining the several grids to interpolate among in the same file,
+with a date metadata item.</p>
+</div>
+<div class="section" id="backward-compatibility-issues">
+<h2>Backward compatibility issues<a class="headerlink" href="#backward-compatibility-issues" title="Permalink to this headline">¶</a></h2>
+<p>None anticipated, except the removal of the (presumably little used) grid catalog
+functionality.</p>
+</div>
+<div class="section" id="potential-future-related-work">
+<h2>Potential future related work<a class="headerlink" href="#potential-future-related-work" title="Permalink to this headline">¶</a></h2>
+<p>The foundations set in the definition of the GeoTIFF grid format should hopefully
+be reused to extend them to support deformation models (was initially discussed
+per <a class="reference external" href="https://github.com/OSGeo/PROJ/issues/1001">https://github.com/OSGeo/PROJ/issues/1001</a>).</p>
+<p>Definition of such an extension is out of scope of this RFC.</p>
+</div>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><p>New API function will be documented.</p></li>
+<li><p>A dedicated documentation page will be created to explain the working of
+network-based access.</p></li>
+<li><p>A dedicated documentation page will be created to describe the GeoTIFF based
+grid format. Mostly reusing above material.</p></li>
+</ul>
+</div>
+<div class="section" id="testing">
+<h2>Testing<a class="headerlink" href="#testing" title="Permalink to this headline">¶</a></h2>
+<p>Number of GeoTIFF formulations (tiled vs untiled, PlanarConfiguration Separate vs
+Contig, data types, scale+offset vs not, etc.) will be tested.</p>
+<p>For testing of network capabilities, a mix of real hits to the CDN and use of
+the alternate pluggable network interface to test edge cases will be used.</p>
+</div>
+<div class="section" id="proposed-implementation">
+<h2>Proposed implementation<a class="headerlink" href="#proposed-implementation" title="Permalink to this headline">¶</a></h2>
+<p>A proposed implementation is available at <a class="reference external" href="https://github.com/OSGeo/PROJ/pull/1817">https://github.com/OSGeo/PROJ/pull/1817</a></p>
+<p>Tooling scripts are currently available at <a class="reference external" href="https://github.com/rouault/sample_proj_gtiff_grids/">https://github.com/rouault/sample_proj_gtiff_grids/</a>
+(will be ultimately stored in PROJ repository)</p>
+</div>
+<div class="section" id="adoption-status">
+<h2>Adoption status<a class="headerlink" href="#adoption-status" title="Permalink to this headline">¶</a></h2>
+<p>The RFC was adopted on 2020-01-10 with +1’s from the following PSC members</p>
+<ul class="simple">
+<li><p>Kristian Evers</p></li>
+<li><p>Even Rouault</p></li>
+<li><p>Thomas Knudsen</p></li>
+<li><p>Howard Butler</p></li>
+<li><p>Kurt Schwehr</p></li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../../faq.html" class="btn btn-neutral float-right" title="FAQ" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="rfc-3.html" class="btn btn-neutral float-left" title="PROJ RFC 3: Dependency management" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 1983-2020
+      <span class="lastupdated">
+        Last updated on 28 Jan 2020.
+      </span>
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
