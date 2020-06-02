@@ -11,7 +11,7 @@ URL:		https://proj.org
 Source0:	%{sname}-%{version}.tar.gz
 
 BuildRequires:	sqlite3
-BuildRequires:	sqlite3-devel >= 3.7
+BuildRequires:	sqlite3-devel >= 3.11
 BuildRequires:	gcc-c++
 BuildRequires:	autoconf
 BuildRequires:	automake
