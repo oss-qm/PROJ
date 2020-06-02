@@ -1,4 +1,4 @@
-Name:		%{name}
+Name:		libproj
 Version:	6.3.2
 Release:	1
 Epoch:		0
