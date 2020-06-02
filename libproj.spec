@@ -1,6 +1,4 @@
-%global sname libproj
-
-Name:		%{sname}
+Name:		%{name}
 Version:	6.3.2
 Release:	1
 Epoch:		0
@@ -8,7 +6,7 @@ Summary:	Cartographic projection software (PROJ)
 
 License:	MIT
 URL:		https://proj.org
-Source0:	%{sname}-%{version}.tar.gz
+Source0:	%{name}-%{version}.tar.gz
 
 BuildRequires:	sqlite3
 BuildRequires:	sqlite3-devel >= 3.7
@@ -46,7 +44,7 @@ This package contains libproj utilities.
 This package contains libproj data library.
 
 %prep
-%setup -q -n %{sname}-%{version}
+%setup -q -n %{name}-%{version}
 ./autogen.sh
 ./configure \
 	--prefix=%{_prefix} \
@@ -63,7 +61,7 @@ This package contains libproj data library.
 
 %{__rm} -rf %{buildroot}
 %make_install
-%{__install} -d %{buildroot}%{_datadir}/%{sname}
+%{__install} -d %{buildroot}%{_datadir}/%{name}
 %{__install} -d %{buildroot}%{_docdir}
 %{__install} -p -m 0644 NEWS AUTHORS COPYING README.md ChangeLog %{buildroot}%{_docdir}
 
