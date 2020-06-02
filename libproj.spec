@@ -1,4 +1,4 @@
-%global sname proj
+%global sname libproj
 
 Name:		%{sname}
 Version:	6.3.2
